@@ -3,16 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Armonía Negativa MIDI - Smart Register</title>
+    <title>Armonía Negativa - Instant Universe</title>
     
-    <!-- Librerías Externas -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Midi.js -->
     <script src="https://unpkg.com/@tonejs/midi@2.0.28/build/Midi.js"></script>
-    
-    <!-- MAGENTA.JS -->
     <script src="https://cdn.jsdelivr.net/npm/@magenta/music@1.23.1/dist/magentamusic.min.js"></script>
 
     <style>
@@ -46,44 +41,22 @@
             50% {background-position: 100% 50%;}
             100% {background-position: 0% 50%;}
         }
-        .btn-magic:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px -5px rgba(168, 85, 247, 0.5);
-        }
-        .drop-zone:hover {
-            border-color: #a855f7;
-            background: rgba(168, 85, 247, 0.05);
-        }
         .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* SLIDERS */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            background: transparent;
-        }
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 16px;
-            width: 16px;
-            border-radius: 50%;
-            background: #ffffff;
-            cursor: pointer;
-            margin-top: -6px;
+            -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
+            background: #ffffff; cursor: pointer; margin-top: -6px;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
         input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
+            width: 100%; height: 4px; cursor: pointer;
+            background: rgba(255, 255, 255, 0.2); border-radius: 2px;
         }
-        input[type=range]:focus { outline: none; }
         #volume-slider::-webkit-slider-thumb { background: #818cf8; }
     </style>
 </head>
@@ -96,25 +69,44 @@
             <h1 class="text-5xl font-black mb-2 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 tracking-tighter">
                 Armonía Negativa
             </h1>
-            <p class="text-indigo-200/50 text-xs font-bold uppercase tracking-[0.3em]">Smart Register &bull; Studio Player</p>
+            <p class="text-indigo-200/50 text-xs font-bold uppercase tracking-[0.3em]">Universal Audio Engine</p>
         </div>
 
         <div id="status-area" class="mb-8 text-center h-6 text-sm font-medium text-indigo-300 transition-all duration-300"></div>
 
         <div class="flex flex-col items-center gap-6 relative z-10">
-            <!-- UPLOAD -->
-            <div id="step-1" class="w-full transition-all duration-500">
+            
+            <!-- PANTALLA 0: PRE-LOADER -->
+            <div id="step-0" class="w-full text-center">
+                <div class="p-8 bg-slate-900/50 rounded-2xl border border-white/10">
+                    <i class="fas fa-server text-4xl text-indigo-400 mb-4"></i>
+                    <h3 class="text-xl font-bold text-white mb-2">Carga de Banco Universal</h3>
+                    <p class="text-sm text-slate-400 mb-6">
+                        Para garantizar reproducción instantánea con cualquier archivo, descargaremos todos los instrumentos (128 sonidos) ahora.
+                    </p>
+                    <button id="init-btn" class="btn-magic w-full py-4 rounded-xl text-white font-bold text-lg shadow-lg flex items-center justify-center gap-3">
+                        <span id="init-text">INICIAR SISTEMA</span>
+                        <i id="init-icon" class="fas fa-bolt"></i>
+                    </button>
+                    <div id="loader-bar-container" class="w-full bg-slate-700 h-2 rounded-full mt-6 hidden overflow-hidden">
+                        <div id="loader-bar" class="bg-indigo-500 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 1: UPLOAD -->
+            <div id="step-1" class="hidden w-full transition-all duration-500">
                 <input type="file" id="midi-input" accept=".mid,.midi" class="hidden">
                 <label for="midi-input" class="drop-zone cursor-pointer flex flex-col items-center justify-center border-2 border-dashed border-slate-600/50 rounded-2xl p-14 group transition-all hover:border-indigo-500/50">
                     <div class="w-20 h-20 bg-slate-800/50 rounded-full flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-all duration-300 shadow-xl shadow-black/20">
                         <i class="fas fa-music text-3xl text-indigo-400 group-hover:scale-110 transition-transform"></i>
                     </div>
                     <span class="text-xl font-bold text-slate-200 group-hover:text-white text-center">Sube tu archivo MIDI</span>
-                    <span class="text-xs text-slate-500 mt-3 font-mono">Corrección de Tesitura Automática</span>
+                    <span class="text-xs text-slate-500 mt-3 font-mono">Motor de audio: LISTO ⚡</span>
                 </label>
             </div>
 
-            <!-- PROCESS -->
+            <!-- STEP 2: PROCESS -->
             <div id="step-2" class="hidden w-full flex flex-col items-center fade-in">
                  <div class="bg-slate-900/40 rounded-xl p-4 mb-6 w-full flex items-center justify-between border border-white/5">
                     <div class="flex items-center gap-4 overflow-hidden">
@@ -125,24 +117,20 @@
                     </div>
                     <button id="reset-btn" class="text-[10px] font-bold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-3 py-1.5 rounded transition-colors uppercase tracking-wider">Cambiar</button>
                  </div>
-                 
                  <button id="transform-btn" class="btn-magic w-full py-5 rounded-xl text-white font-bold text-lg shadow-2xl flex items-center justify-center gap-3 group">
                     <i class="fas fa-wand-magic-sparkles group-hover:rotate-12 transition-transform"></i> 
-                    <span>APLICAR INVERSIÓN INTELIGENTE</span>
+                    <span>APLICAR INVERSIÓN</span>
                  </button>
             </div>
 
-            <!-- PLAYER -->
+            <!-- STEP 3: PLAYER -->
             <div id="step-3" class="hidden w-full space-y-4 fade-in">
                 <div class="p-6 bg-slate-900/40 rounded-2xl border border-white/5 backdrop-blur-sm shadow-xl">
-                    
                     <button id="play-btn" class="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white py-4 rounded-xl flex items-center justify-center gap-3 transition-all text-lg font-bold mb-6 shadow-lg shadow-indigo-500/20 group">
-                        <span id="play-loader" class="hidden"><i class="fas fa-circle-notch fa-spin"></i></span>
                         <i id="play-icon" class="fas fa-play ml-1"></i> 
                         <span id="play-text">ESCUCHAR</span>
                     </button>
 
-                    <!-- SEEK SLIDER -->
                     <div class="mb-4 px-1">
                         <div class="flex items-center justify-between text-[10px] text-indigo-300/70 mb-2 font-mono uppercase tracking-wider">
                             <span id="current-time">0:00</span>
@@ -155,13 +143,11 @@
                         </div>
                     </div>
 
-                    <!-- VOLUME -->
                     <div class="flex items-center gap-3 bg-black/20 rounded-lg p-3 border border-white/5 mb-6">
                         <i id="vol-icon" class="fas fa-volume-up text-indigo-400 text-xs"></i>
                         <input type="range" id="volume-slider" min="-30" max="0" value="-5" step="1">
                     </div>
                     
-                    <!-- ACTIONS -->
                     <div class="grid grid-cols-2 gap-3">
                         <button id="download-midi-btn" class="bg-slate-700/30 hover:bg-slate-700/50 text-white py-3 rounded-xl flex items-center justify-center gap-2 font-semibold text-xs transition-all border border-white/5">
                             <i class="fas fa-download text-indigo-400"></i> Descargar MIDI
@@ -176,42 +162,107 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN MAGENTA
         const player = new mm.SoundFontPlayer('https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus');
         
-        // Elementos UI
-        const fileInput = document.getElementById('midi-input');
+        // UI Elements
+        const step0 = document.getElementById('step-0');
         const step1 = document.getElementById('step-1');
         const step2 = document.getElementById('step-2');
         const step3 = document.getElementById('step-3');
+        const initBtn = document.getElementById('init-btn');
+        const loaderBar = document.getElementById('loader-bar');
+        const loaderContainer = document.getElementById('loader-bar-container');
+        
+        const fileInput = document.getElementById('midi-input');
         const transformBtn = document.getElementById('transform-btn');
         const statusArea = document.getElementById('status-area');
-        
-        // Controles Player
         const playBtn = document.getElementById('play-btn');
         const playIcon = document.getElementById('play-icon');
         const playText = document.getElementById('play-text');
-        const playLoader = document.getElementById('play-loader');
         const seekSlider = document.getElementById('seek-slider');
         const volumeSlider = document.getElementById('volume-slider');
         const visualProgress = document.getElementById('visual-progress');
         const currentTimeLabel = document.getElementById('current-time');
         const totalTimeLabel = document.getElementById('total-time');
         
-        // Variables Globales
+        // Logic Vars
         let originalMidiBuffer = null;
         let transformedMidiObject = null;
         let transformedMidiBinary = null;
         let noteSequence = null;
         let currentFileName = "";
         
-        // Variables Reproducción
+        // Playback Vars
         let isPlaying = false;
         let isDragging = false;
         let totalDuration = 0;
         let currentSeekOffset = 0;
         let playbackStartTime = 0;
         let playbackInterval;
+
+        // --- INICIALIZACIÓN UNIVERSAL ---
+        initBtn.onclick = async () => {
+            initBtn.disabled = true;
+            document.getElementById('init-text').textContent = "DESCARGANDO BANCO DE SONIDOS...";
+            document.getElementById('init-icon').className = "fas fa-circle-notch fa-spin";
+            loaderContainer.classList.remove('hidden');
+
+            try {
+                // 1. Iniciar Audio Context (Necesario por el navegador)
+                if (mm.Player.tone && mm.Player.tone.context.state !== 'running') {
+                    await mm.Player.tone.context.resume();
+                }
+
+                // 2. Crear una Secuencia "Fantasma" que usa TODOS los instrumentos (0 al 127)
+                // Esto obliga a Magenta a descargar el banco completo ahora mismo.
+                const universalSequence = {
+                    notes: [],
+                    quantizationInfo: {stepsPerQuarter: 4},
+                    tempos: [{qpm: 120}],
+                    totalTime: 1
+                };
+
+                // Añadir una nota para cada instrumento General MIDI
+                for (let i = 0; i < 128; i++) {
+                    universalSequence.notes.push({
+                        pitch: 60,
+                        startTime: 0,
+                        endTime: 0.1,
+                        velocity: 1,
+                        program: i, // Instrumento i
+                        isDrum: false
+                    });
+                }
+                // Añadir Batería
+                universalSequence.notes.push({
+                    pitch: 36,
+                    startTime: 0,
+                    endTime: 0.1,
+                    velocity: 1,
+                    isDrum: true
+                });
+
+                // 3. Forzar Carga (Simulando una barra de progreso falsa pero realista)
+                loaderBar.style.width = "20%";
+                
+                // loadSamples descarga lo necesario para tocar la secuencia
+                await player.loadSamples(universalSequence);
+                
+                loaderBar.style.width = "100%";
+                
+                setTimeout(() => {
+                    step0.classList.add('hidden');
+                    step1.classList.remove('hidden');
+                    showStatus("✅ Motor de audio cargado al 100%", "text-emerald-400");
+                }, 500);
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('init-text').textContent = "ERROR DE CONEXIÓN";
+                showStatus("No se pudo cargar el banco de sonidos. Revisa tu internet.", "text-rose-400");
+            }
+        };
+
 
         fileInput.onchange = (e) => {
             const file = e.target.files[0];
@@ -231,72 +282,42 @@
 
         transformBtn.onclick = async () => {
             if (!originalMidiBuffer) return;
-            showStatus("Calculando inversión y tesitura...", "text-indigo-400");
-
+            showStatus("Procesando...", "text-indigo-400");
+            
             setTimeout(async () => {
                 try {
                     const midi = new Midi(originalMidiBuffer);
-                    
-                    // Mapa de instrumentos para forzar la reproducción correcta
                     const trackInstrumentMap = [];
-                    
                     let drumTracksFound = 0;
                     const drumKeywords = ['drum', 'perc', 'bateria', 'bat', 'kit', 'rhythm', 'traps'];
 
-                    midi.tracks.forEach((track, index) => {
+                    midi.tracks.forEach((track) => {
                         const originalInstrumentNumber = track.instrument.number;
                         const originalChannel = track.channel;
-
-                        // DETECCION DE BATERIA
                         const trackName = (track.name || "").toLowerCase();
                         const instrumentName = (track.instrument.name || "").toLowerCase();
                         const isChannel10 = track.channel === 9; 
                         const isFlaggedPercussion = track.instrument.percussion;
-                        const hasDrumName = drumKeywords.some(keyword => 
-                            trackName.includes(keyword) || instrumentName.includes(keyword)
-                        );
-                        
+                        const hasDrumName = drumKeywords.some(keyword => trackName.includes(keyword) || instrumentName.includes(keyword));
                         const isDrum = isChannel10 || isFlaggedPercussion || hasDrumName;
 
-                        // Guardamos la info para el reproductor web
                         if (track.notes.length > 0) {
                             trackInstrumentMap.push({
                                 program: originalInstrumentNumber,
-                                isDrum: isDrum,
-                                channel: originalChannel
+                                isDrum: isDrum
                             });
                         }
 
                         if (isDrum) {
                             drumTracksFound++;
-                            console.log(`🥁 Batería protegida: "${track.name}"`);
                         } else {
-                            // --- ALGORITMO DE INVERSIÓN CON CORRECCIÓN DE TESITURA ---
                             track.notes.forEach(note => {
                                 const originalPitch = note.midi;
-                                
-                                // 1. Inversión Matemática (Eje central genérico)
                                 let invertedPitch = 127 - originalPitch;
-
-                                // 2. Corrección de Octava (Smart Register)
-                                // Si la nota invertida está muy lejos de la original, la acercamos
-                                // moviéndola por octavas (pasos de 12 semitonos).
-                                // Umbral: 7 semitonos (una quinta justa)
-                                
-                                // Mientras esté muy aguda comparada con la original
-                                while (invertedPitch > originalPitch + 7) {
-                                    invertedPitch -= 12;
-                                }
-                                // Mientras esté muy grave comparada con la original
-                                while (invertedPitch < originalPitch - 7) {
-                                    invertedPitch += 12;
-                                }
-
-                                // 3. Asegurar límites MIDI (0-127)
+                                while (invertedPitch > originalPitch + 7) invertedPitch -= 12;
+                                while (invertedPitch < originalPitch - 7) invertedPitch += 12;
                                 note.midi = Math.max(0, Math.min(127, invertedPitch));
                             });
-
-                            // Re-asignación explícita del instrumento al track
                             track.instrument.number = originalInstrumentNumber;
                             if(originalChannel !== undefined) track.channel = originalChannel;
                         }
@@ -304,25 +325,19 @@
 
                     transformedMidiObject = midi;
                     totalDuration = midi.duration;
-                    
                     const midiArray = midi.toArray(); 
                     transformedMidiBinary = new Uint8Array(midiArray);
-                    
                     const blob = new Blob([transformedMidiBinary], { type: 'audio/midi' });
                     noteSequence = await mm.blobToNoteSequence(blob);
 
-                    // --- PARCHE DE INSTRUMENTOS V2 ---
-                    // Forzamos los instrumentos iterando sobre la NoteSequence generada
                     if (noteSequence.notes) {
                         noteSequence.notes.forEach(note => {
-                            // note.instrument es el indice del track
                             if (trackInstrumentMap[note.instrument]) {
                                 const info = trackInstrumentMap[note.instrument];
                                 if (info.isDrum) {
                                     note.isDrum = true;
                                     note.program = undefined; 
                                 } else {
-                                    // AQUÍ ESTA LA CLAVE: Magenta a veces usa 'program' para seleccionar el sample
                                     note.program = info.program; 
                                     note.isDrum = false;
                                 }
@@ -348,7 +363,6 @@
             }, 50);
         };
 
-        // --- LÓGICA REPRODUCTOR (IGUAL) ---
         playBtn.onclick = async () => {
             if (player.isPlaying()) {
                 stopPlayback();
@@ -363,69 +377,48 @@
 
         async function startPlayback(startTime = 0) {
             if (!noteSequence) return;
-            playIcon.classList.add('hidden');
-            playLoader.classList.remove('hidden');
-            playBtn.disabled = true;
+            
+            // YA NO HAY LOADING AQUÍ PORQUE SE HIZO AL PRINCIPIO
+            isPlaying = true;
+            playIcon.className = "fas fa-stop";
+            playText.textContent = "DETENER";
+            playBtn.classList.replace('bg-indigo-600', 'bg-rose-600');
+            playBtn.classList.replace('hover:bg-indigo-500', 'hover:bg-rose-500');
 
-            try {
-                if (mm.Player.tone && mm.Player.tone.context.state !== 'running') {
-                    await mm.Player.tone.context.resume();
-                }
-                
-                await player.loadSamples(noteSequence);
-                
-                let sequenceToPlay = noteSequence;
-                currentSeekOffset = startTime;
-                if (startTime > 0) {
-                    sequenceToPlay = mm.sequences.trim(noteSequence, startTime, totalDuration);
-                }
-
-                player.start(sequenceToPlay).then(() => {
-                    stopPlayback(); 
-                    seekSlider.value = 0;
-                    updateVisualProgress(0);
-                });
-
-                isPlaying = true;
-                playLoader.classList.add('hidden');
-                playIcon.classList.remove('hidden');
-                playIcon.className = "fas fa-stop";
-                playText.textContent = "DETENER";
-                playBtn.disabled = false;
-                playBtn.classList.replace('bg-indigo-600', 'bg-rose-600');
-                playBtn.classList.replace('hover:bg-indigo-500', 'hover:bg-rose-500');
-
-                playbackStartTime = Date.now();
-                if (playbackInterval) clearInterval(playbackInterval);
-                playbackInterval = setInterval(() => {
-                    if (!isPlaying || isDragging) return;
-                    const elapsedSincePlay = (Date.now() - playbackStartTime) / 1000;
-                    const realTime = currentSeekOffset + elapsedSincePlay;
-
-                    if (realTime < totalDuration) {
-                        seekSlider.value = realTime;
-                        updateVisualProgress(realTime);
-                        currentTimeLabel.textContent = formatTime(realTime);
-                    }
-                }, 100);
-
-            } catch (err) {
-                console.error(err);
-                stopPlayback();
+            let sequenceToPlay = noteSequence;
+            currentSeekOffset = startTime;
+            if (startTime > 0) {
+                sequenceToPlay = mm.sequences.trim(noteSequence, startTime, totalDuration);
             }
+
+            player.start(sequenceToPlay).then(() => {
+                stopPlayback(); 
+                seekSlider.value = 0;
+                updateVisualProgress(0);
+            });
+
+            playbackStartTime = Date.now();
+            if (playbackInterval) clearInterval(playbackInterval);
+            playbackInterval = setInterval(() => {
+                if (!isPlaying || isDragging) return;
+                const elapsedSincePlay = (Date.now() - playbackStartTime) / 1000;
+                const realTime = currentSeekOffset + elapsedSincePlay;
+                if (realTime < totalDuration) {
+                    seekSlider.value = realTime;
+                    updateVisualProgress(realTime);
+                    currentTimeLabel.textContent = formatTime(realTime);
+                }
+            }, 100);
         }
 
         function stopPlayback() {
             player.stop();
             isPlaying = false;
             clearInterval(playbackInterval);
-            playLoader.classList.add('hidden');
-            playIcon.classList.remove('hidden');
             playIcon.className = "fas fa-play";
             playText.textContent = "ESCUCHAR";
             playBtn.classList.replace('bg-rose-600', 'bg-indigo-600');
             playBtn.classList.replace('hover:bg-rose-500', 'hover:bg-indigo-500');
-            playBtn.disabled = false;
         }
 
         seekSlider.oninput = (e) => {
@@ -463,19 +456,37 @@
         };
 
         document.getElementById('download-midi-btn').onclick = () => {
-            try {
-                if (!transformedMidiBinary) return;
+            if (transformedMidiBinary) {
                 const blob = new Blob([transformedMidiBinary], { type: "audio/midi" });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
                 a.download = `${currentFileName}_NEGATIVO.mid`;
                 a.click();
-                URL.revokeObjectURL(url);
-            } catch (err) {
-                showStatus("❌ Error generando descarga", "text-rose-400");
             }
         };
+
+        function softReset() {
+            if (isPlaying) stopPlayback();
+            originalMidiBuffer = null;
+            transformedMidiObject = null;
+            transformedMidiBinary = null;
+            noteSequence = null;
+            currentFileName = "";
+            totalDuration = 0;
+            fileInput.value = ""; 
+            statusArea.textContent = "";
+            seekSlider.value = 0;
+            visualProgress.style.width = "0%";
+            currentTimeLabel.textContent = "0:00";
+            totalTimeLabel.textContent = "0:00";
+            step3.classList.add('hidden');
+            step2.classList.add('hidden');
+            step1.classList.remove('hidden');
+        }
+
+        document.getElementById('reset-btn').onclick = softReset;
+        document.getElementById('restart-btn').onclick = softReset;
 
         function showStatus(msg, cls) {
             statusArea.textContent = msg;
@@ -488,9 +499,6 @@
             const s = Math.floor(sec % 60);
             return `${m}:${s.toString().padStart(2, '0')}`;
         }
-
-        document.getElementById('reset-btn').onclick = () => location.reload();
-        document.getElementById('restart-btn').onclick = () => location.reload();
     </script>
 </body>
 </html>
